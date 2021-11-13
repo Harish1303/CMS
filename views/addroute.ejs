@@ -19,7 +19,7 @@
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dynamic_field">
                                     <tr>
-                                        <td><input type="text" name="name[]" placeholder="Enter your Name"
+                                        <td><input type="text" name="name[]" placeholder="Enter Location"
                                                 class="form-control name_list" /></td>
                                         <td><button type="button" name="add" id="add" class="btn btn-success">Add
                                                 More</button></td>
@@ -53,7 +53,7 @@
                 });
                 $('#submit').click(function () {
                     $.ajax({
-                        url: "/test",
+                        url: "/addroute",
                         method: "POST",
                         data: $('#add_name').serialize(),
                         success: function (data) {

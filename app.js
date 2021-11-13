@@ -45,14 +45,17 @@ const parcel = new mongoose.Schema({
   description: String,
   start: String,
   destination: String,
-  address: String,
   weight: Number,
-  path: [String]
+  path: [String],
+  status: Boolean
 })
 const traveltime = new mongoose.Schema({
   from: String,
   to: String,
   time: Number
+})
+const location = new mongoose.Schema({
+  location: String
 })
 userSchema.plugin(passportLocalMongoose);
 
@@ -60,6 +63,8 @@ const User = new mongoose.model("User", userSchema);
 const Route = new mongoose.model("Route", route);
 const Parcel = new mongoose.model("Parcel", parcel);
 const Traveltime = new mongoose.model("Traveltime", traveltime);
+const Location = new mongoose.model("Location", location);
+
 
 passport.use(User.createStrategy());
 
@@ -90,11 +95,16 @@ app.get("/dashboard", function (req, res) {
   res.render("dashboard")
 });
 
-app.post("/test", function (req, res) {
-  Route.create({ start: "a", destination: "C", path: req.body.name })
+app.post("/addroute", function (req, res) {
+  start = req.body.name[0]
+  destination = req.body.name[(req.body.name.length) - 1]
+  console.log(start, destination)
+  Route.create({ start: start, destination: destination, path: req.body.name })
   console.log(req.body.name)
 })
-
+app.get("/addlocation", function (req, res) {
+  res.render("addlocation")
+})
 app.get("/addparcel", function (req, res) {
   res.render("addparcel");
 });
@@ -125,19 +135,38 @@ app.post("/traveltime", function (req, res) {
 app.post("/updateparcel", function (req, res) {
   parcelid = req.body.parcelid
   newlocation = req.body.newlocation
-  Parcel.findOneAndUpdate({ parcelid: parcelid }, {
-    $push: { path: newlocation }
-  }).then(updatedparcel => {
-    console.log("success")
-    res.redirect("/updateparcel")
+  Parcel.find({ parcelid: parcelid }).then(parcel => {
+    cur_parcel = parcel[0]
+    start = cur_parcel.start
+    destination = cur_parcel.destination
+
+    Route.find({ start: start, destination: destination }).then(routes => {
+      correct_route = routes[0]
+      path = correct_route.path
+      if (path.includes(newlocation)) {
+        //push
+        Parcel.findOneAndUpdate({ parcelid: parcelid }, {
+          $push: { path: newlocation }
+        }).then(updatedparcel => {
+          console.log("success")
+          res.redirect("/updateparcel")
+        }).catch(err => {
+          console.log(err)
+        })
+      }
+      else {
+        Parcel.findOneAndUpdate({ parcelid: parcelid }, { status: false }).then(ret => {
+          res.redirect("/updateparcel")
+        })
+      }
+    })
   }).catch(err => {
-    console.log(err)
-    res.redirect("/failupdate")
+    message = { err: "Wrong ID" }
+    res.render("updateparcel", message)
   })
+
 });
-app.post("/nw", function (req, res) {
-  console.log("hey!")
-})
+
 
 app.get("/lawda", function (req, res) {
   console.log("hahah")
@@ -170,11 +199,11 @@ app.get("/lawda", function (req, res) {
       })
     })*/
 })
-app.post("/test2", function (req, res) {
+app.post("/addparcel", function (req, res) {
   const parcelid = Math.random().toString(36).slice(-6);
   Parcel.create({
-    parcelid: parcelid, from: req.body.from, to: req.body.to, description: req.body.description, destination: req.body.destination,
-    address: req.body.address, weight: req.body.weight, start: req.body.start, path: [req.body.from]
+    parcelid: parcelid, from: req.body.from, to: req.body.to, description: req.body.description, destination: req.body.destination
+    , weight: req.body.weight, start: req.body.start, path: [req.body.start], status: true
   })
   res.redirect("/addparcel");
 });
