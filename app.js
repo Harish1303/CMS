@@ -105,6 +105,13 @@ app.post("/addroute", function (req, res) {
 app.get("/addlocation", function (req, res) {
   res.render("addlocation")
 })
+app.post("/addlocation", function (req, res) {
+  Location.create({ location: req.body.location }).then(success => {
+    res.redirect("/addlocation")
+  }).catch(err => {
+    console.log(err)
+  })
+})
 app.get("/addparcel", function (req, res) {
   res.render("addparcel");
 });
@@ -168,17 +175,40 @@ app.post("/updateparcel", function (req, res) {
 });
 
 
-app.get("/lawda", function (req, res) {
-  console.log("hahah")
+app.post("/searchbyid", function (req, res) {
   parcelid = req.body.parcelid
-  const somepath = ["chennai", "hyd", "delhi"]
-  async function loop() {
-    for (let i = 0; i < 2; i++) {
-      times = await Traveltime.find({ "from": somepath[i], "to": somepath[i + 1] })
-      console.log(times)
-    }
-  }
-  loop()
+  Parcel.find({ parcelid: parcelid }).then(parcel => {
+    path_travelled = parcel[0].path
+    start = parcel[0].start
+    destination = parcel[0].destination
+    cur_location = path_travelled[path_travelled.length - 1]
+    Route.find({ start: start, destination: destination }).then(rote => {
+      complete_path = rote[0].path
+      var i = 0;
+      for (i = 0; i < complete_path.length; i++) {
+        if (complete_path[i] == cur_location) {
+          break;
+        }
+      }
+      remaining_path = complete_path.slice(i, complete_path.length)
+      var eta = 0
+      async function loop(path) {
+        for (let i = 0; i < path.length - 1; i++) {
+          times = await Traveltime.find({ "from": path[i], "to": path[i + 1] }).catch(err => {
+            console.log(err)
+          })
+          console.log(times[0].time)
+          eta = eta + times[0].time
+        }
+      }
+      loop(remaining_path).then(a => {
+        console.log(eta)
+      })
+
+    })
+
+  })
+
   /*
   Traveltime.aggregate([{
     $match:
