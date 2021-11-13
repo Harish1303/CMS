@@ -128,7 +128,7 @@ app.post("/updateparcel", function (req, res) {
   Parcel.findOneAndUpdate({ parcelid: parcelid }, {
     $push: { path: newlocation }
   }).then(updatedparcel => {
-    console.log("succ")
+    console.log("success")
     res.redirect("/updateparcel")
   }).catch(err => {
     console.log(err)
