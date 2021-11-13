@@ -85,12 +85,14 @@ app.get("/addroute", function (req, res) {
 });
 app.get("/searchbyid", function (req, res) {
   res.render("searchbyid")
-})
+});
+app.get("/dashboard", function (req, res) {
+  res.render("dashboard")
+});
 
 app.post("/test", function (req, res) {
   Route.create({ start: "a", destination: "C", path: req.body.name })
   console.log(req.body.name)
-
 })
 
 app.get("/addparcel", function (req, res) {
