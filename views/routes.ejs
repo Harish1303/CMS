@@ -1,0 +1,55 @@
+<%- include('partials/header') %>
+    <div class="container mt-5">
+        <h1>ADD PARCEL</h1>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                var max_fields = 20;
+                var wrapper = $(".container1");
+                var add_button = $(".add_form_field");
+
+                var x = 1;
+                $(add_button).click(function (e) {
+                    e.preventDefault();
+                    if (x < max_fields) {
+                        x++;
+                        $(wrapper).append('<div><input type="text" name="mytext[]"/><a href="#" class="delete">Delete</a></div>'); //add input box
+                    }
+                    else {
+                        alert('You Reached the limits')
+                    }
+                });
+
+                $(wrapper).on("click", ".delete", function (e) {
+                    e.preventDefault(); $(this).parent('div').remove(); x--;
+                })
+            });
+        </script>
+        <div class="row">
+            <div class="col-sm-8">
+                <div class="card">
+                    <div class="card-body">
+
+                        <!-- Makes POST request to /register route -->
+                        <form action="/register" method="POST">
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" class="form-control" name="username">
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="password" class="form-control" name="password">
+                            </div>
+                            <button type="submit" class="btn btn-dark">Register</button>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+
+    <%- include('partials/header') %>
