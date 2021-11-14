@@ -98,9 +98,7 @@ app.get("/dashboard", function (req, res) {
 app.post("/addroute", function (req, res) {
   start = req.body.name[0]
   destination = req.body.name[(req.body.name.length) - 1]
-  console.log(start, destination)
   Route.create({ start: start, destination: destination, path: req.body.name })
-  console.log(req.body.name)
 })
 app.get("/addlocation", function (req, res) {
   res.render("addlocation")
@@ -155,7 +153,6 @@ app.post("/updateparcel", function (req, res) {
         Parcel.findOneAndUpdate({ parcelid: parcelid }, {
           $push: { path: newlocation }
         }).then(updatedparcel => {
-          console.log("success")
           res.redirect("/updateparcel")
         }).catch(err => {
           console.log(err)
