@@ -1,49 +1,35 @@
-<%- include('partials/header') %>
-
-<head>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+      <link rel="stylesheet" href="/css/dashboard.css"/>
+    </head>
+    <body>
+      <header>
+        <h1>
+            Courier Management System
+                  </h1>
+        <span>
+              enjoy hassle free deliveries
+                  </span>
+      </header>
       
-      <style>
-        .but {
-            background-color: white;
-            color: grey;
-            padding: 15px 10px;
-            text-align: center;
-            font-size: 20px;
-            margin: 10px 670px;
-            cursor: pointer;
-            justify-content: center;
-            align-items: center;
-            height: 100px;
-            width: 200px;
-            border: 3px solid grey;
-        }
-        </style>
+      
+      <div class="container purple topBotomBordersIn">
+        <a href="/addroute">ADD ROUTE</a>
+        <a href="/addparcel">ADD PARCEL</a>
+        <a href="/addlocation">ADD LOCATION</a>
+        <a href="/updateparcel">UPDATE PARCEL</a>
+        <a href="/traveltime">UPDATE TIME</a>
+      </div>
+      
+      
+      
+      <footer>
+        <span>© Copyright All rights Reserved</span>
+      </footer>
 
-</head>
-<body padding-top:50px;>
-    <h1 align="center" ></style>Hello</h1>
-    <a href="/addroute">
-    <button class="but">Add Route
-    </button>
-    </a>
-    <a href="/addlocation">
-    <button class="but">
-        Add Location
-    </button>
-    </a>
-    <a href="/addparcel">
-    <button class="but">Add Parcel
-    </button>
-    </a>
-    <a href="/updateparcel">
-    <button class="but">Update parcel status
-    </button>
-    </a>
-    <a href="/traveltime">
-    <button class="but">Update time between places
-    </button></a>
-</body>
-
-<%- include('partials/footer') %>
+    </body>
+    
+</html>
 
 

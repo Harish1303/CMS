@@ -23,12 +23,12 @@
                                 <input type="text" class="form-control" name="description">
                             </div>
                             <div class="form-group">
-                                <label>Start</label>
-                                <input type="text" class="form-control" name="start">
+                                <label> Start </label>
+                                <select name="start" id="start_location" style="width: 20%;margin-left:60px;"> </select>
                             </div>
                             <div class="form-group">
-                                <label>Destination </label>
-                                <input type="text" class="form-control" name="destination">
+                                  <label> Destination </label>
+                                  <select name="destination" id="destination_location" style="width: 20%;margin-left:10px;"> </select>
                             </div>
                             <div class="form-group">
                                 <label>Weight</label>
@@ -37,7 +37,7 @@
 
                             <button type="submit" class="btn btn-dark">Add Parcel</button>
                         </form>
-
+                        <input type="text" class="locations" value="<%= data %>" style="display: none;">
                     </div>
                 </div>
             </div>
@@ -48,3 +48,17 @@
     </div>
 
     <%- include('partials/header') %>
+    <script>
+        var data= JSON.parse(document.querySelector(".locations").value);
+        var block="";
+
+        if(data.length == 0){
+            block='<option value="NULL">No Locations available</option>'
+        }
+        for(i=0; i<data.length;i++){
+            block+='<option value="'+data[i].location+'">'+data[i].location+'</option>'
+        }
+        document.getElementById("start_location").innerHTML=block;
+        document.getElementById("destination_location").innerHTML=block;
+
+    </script>

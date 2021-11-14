@@ -17,12 +17,12 @@
                             </div>
                             <div class="form-group">
                                 <label>Update Location</label>
-                                <input type="text" class="form-control" name="newlocation">
+                                <select name="location" id="new_location" style="width: 20%;margin-left:10px;"> </select>
                             </div>
 
                             <button type="submit" class="btn btn-dark">Update</button>
                         </form>
-
+                        <input type="text" class="locations" value="<%= data %>" style="display: none;">
                     </div>
                 </div>
             </div>
@@ -33,3 +33,16 @@
     </div>
 
     <%- include('partials/header') %>
+    <script>
+        var data= JSON.parse(document.querySelector(".locations").value);
+        var block="";
+
+        if(data.length == 0){
+            block='<option value="NULL">No Locations available</option>'
+        }
+        for(i=0; i<data.length;i++){
+            block+='<option value="'+data[i].location+'">'+data[i].location+'</option>'
+        }
+        document.getElementById("new_location").innerHTML=block;
+
+    </script>

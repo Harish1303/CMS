@@ -73,26 +73,47 @@ passport.deserializeUser(User.deserializeUser());
 
 
 app.get("/", function (req, res) {
+  sess=req.session;
+  sess.loggedInUser;
   res.render("home");
 });
 
 
 app.get("/login", function (req, res) {
+  
   res.render("login");
 });
 
 app.get("/register", function (req, res) {
+  
   res.render("register");
 });
 
 app.get("/addroute", function (req, res) {
-  res.render("addroute");
+  if(req.session.loggedInUser){
+    Location.find().then(data => {
+      res.render("addroute",{data:JSON.stringify(data)});
+    })
+  }
+  else{
+    res.render("login");
+  }
+ 
 });
 app.get("/searchbyid", function (req, res) {
-  res.render("searchbyid")
+  if(req.session.loggedInUser){
+  res.render("searchbyid")}
+  else{
+    res.render("login");
+  }
 });
 app.get("/dashboard", function (req, res) {
-  res.render("dashboard")
+  if(req.session.loggedInUser){
+  res.render("dashboard")}
+  else{
+    res.render("login");
+  }
+ 
 });
 
 app.post("/addroute", function (req, res) {
@@ -101,7 +122,12 @@ app.post("/addroute", function (req, res) {
   Route.create({ start: start, destination: destination, path: req.body.name })
 })
 app.get("/addlocation", function (req, res) {
+  if(req.session.loggedInUser){
   res.render("addlocation")
+  }
+  else{
+    res.render("login");
+  }
 })
 app.post("/addlocation", function (req, res) {
   Location.create({ location: req.body.location }).then(success => {
@@ -111,14 +137,35 @@ app.post("/addlocation", function (req, res) {
   })
 })
 app.get("/addparcel", function (req, res) {
-  res.render("addparcel");
+  if(req.session.loggedInUser){
+    Location.find().then(data => {
+      res.render("addparcel",{data:JSON.stringify(data)});
+    })
+  }
+  else{
+    res.render("login");
+  }
 });
 
 app.get("/updateparcel", function (req, res) {
-  res.render("updateparcel");
+  if(req.session.loggedInUser){
+    Location.find().then(data => {
+      res.render("updateparcel",{data:JSON.stringify(data)});
+    })
+  }
+  else{
+    res.render("login");
+  }
 });
 app.get("/traveltime", function (req, res) {
-  res.render("traveltime");
+  if(req.session.loggedInUser){
+    Location.find().then(data => {
+      res.render("traveltime",{data:JSON.stringify(data)});
+    })
+  }
+  else{
+    res.render("login");
+  }
 });
 app.post("/traveltime", function (req, res) {
   from = req.body.from
@@ -255,7 +302,6 @@ app.post("/register", function (req, res) {
 });
 
 app.post("/login", function (req, res) {
-
   const user = new User({
     username: req.body.username,
     password: req.body.password
@@ -265,7 +311,10 @@ app.post("/login", function (req, res) {
     if (err) {
       console.log(err);
     } else {
+      sess=req.session;
+      sess.loggedInUser =true;
       passport.authenticate("local")(req, res, function () {
+        
         res.redirect("/dashboard");
       });
     }
