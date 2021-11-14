@@ -250,7 +250,7 @@ app.post("/register", function (req, res) {
       res.redirect("/register");
     } else {
       passport.authenticate("local")(req, res, function () {
-        res.redirect("/homepage");
+        res.redirect("/login");
       });
     }
   });
@@ -269,7 +269,7 @@ app.post("/login", function (req, res) {
       console.log(err);
     } else {
       passport.authenticate("local")(req, res, function () {
-        res.redirect("/routes");
+        res.redirect("/dashboard");
       });
     }
   });
