@@ -31,7 +31,10 @@ mongoose.set('useFindAndModify', false);
 
 const userSchema = new mongoose.Schema({
   email: String,
-  password: String
+  password: String,
+  Name: String,
+  PhoneNumber: String,
+  Age: Number
 });
 const route = new mongoose.Schema({
   start: String,
@@ -106,6 +109,7 @@ app.get("/addlocation", function (req, res) {
   res.render("addlocation")
 })
 app.post("/addlocation", function (req, res) {
+  console.log("p")
   Location.create({ location: req.body.location }).then(success => {
     res.redirect("/addlocation")
   }).catch(err => {
@@ -177,7 +181,9 @@ app.post("/updateparcel", function (req, res) {
 
 app.post("/searchbyid", function (req, res) {
   parcelid = req.body.parcelid
+  console.log(parcelid)
   Parcel.find({ parcelid: parcelid }).then(parcel => {
+    console.log(parcel)
     path_travelled = parcel[0].path
     start = parcel[0].start
     destination = parcel[0].destination
@@ -203,6 +209,9 @@ app.post("/searchbyid", function (req, res) {
       }
       loop(remaining_path).then(a => {
         console.log(eta)
+        console.log(parcel);
+        console.log(remaining_path);
+
       })
 
     })
@@ -256,7 +265,9 @@ app.post("/register", function (req, res) {
   });
 
 });
-
+app.get("/orderdetails", function (req, res) {
+  res.render("orderdetails")
+})
 app.post("/login", function (req, res) {
 
   const user = new User({
