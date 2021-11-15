@@ -19,8 +19,13 @@
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dynamic_field">
                                     <tr>
-                                        <td><input type="text" name="name[]" placeholder="Enter Location"
-                                                class="form-control name_list" /></td>
+                                        <td><div>
+                                            <div style="width: 84%; float:left;">
+                                              <select name="location" id="location_name" style="width: 50%;">
+                                                <option value="" disabled selected>enter location</option>
+                                              </select>
+                                            </div>
+                                          </div></td>
                                         <td><button type="button" name="add" id="add" class="btn btn-success">Add
                                                 More</button></td>
                                     </tr>
@@ -28,7 +33,7 @@
                                 <input type="button" name="submit" id="submit" class="btn btn-info" value="Submit" />
                             </div>
                         </form>
-
+                        <input type="text" class="locations" value="<%= data %>" style="display: none;">
                     </div>
                 </div>
             </div>
@@ -45,7 +50,17 @@
                 var i = 1;
                 $('#add').click(function () {
                     i++;
-                    $('#dynamic_field').append('<tr id="row' + i + '"><td><input type="text" name="name[]" placeholder="Enter Location" class="form-control name_list" /></td><td><button type="button" name="remove" id="' + i + '" class="btn btn-danger btn_remove">X</button></td></tr>');
+                    $('#dynamic_field').append('<tr id="row' + i + '"><td><div><div style="width: 84%; float:left;"><select name="location" id="location'+i+'"" style="width: 50%;"><option value="" disabled selected>enter location</option></select></div></div></td><td><button type="button" name="remove" id="' + i + '" class="btn btn-danger btn_remove">X</button></td></tr>');
+                    var data= JSON.parse(document.querySelector(".locations").value);
+                    var block="";
+                    var id = "location"+i;
+                    if(data.length == 0){
+                        block='<option value="NULL">No Locations available</option>'
+                    }
+                    for(var j=0; j<data.length;j++){
+                        block+='<option value="'+data[j].location+'">'+data[j].location+'</option>'
+                    }
+                    document.getElementById(id).innerHTML=block;
                 });
                 $(document).on('click', '.btn_remove', function () {
                     var button_id = $(this).attr("id");
@@ -65,4 +80,15 @@
                     console.log($('#add_name').serialize())
                 });
             });
+            var data= JSON.parse(document.querySelector(".locations").value);
+            var block="";
+	
+            if(data.length == 0){
+                block='<option value="NULL">No Locations available</option>'
+            }
+            for(i=0; i<data.length;i++){
+                block+='<option value="'+data[i].location+'">'+data[i].location+'</option>'
+            }
+            document.getElementById("location_name").innerHTML=block;
+
         </script>
