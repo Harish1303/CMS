@@ -37,19 +37,29 @@ const userSchema = new mongoose.Schema({
   Age: Number
 });
 const route = new mongoose.Schema({
+  routeid: {
+    type: String,
+    unique: true
+  },
   start: String,
   destination: String,
   path: [String]
 });
 const parcel = new mongoose.Schema({
-  parcelid: String,
+  parcelid: {
+    type: String,
+    unique: true
+  },
   from: String,
   to: String,
   description: String,
   start: String,
   destination: String,
   weight: Number,
-  path: [String],
+  path: [{
+    location: String,
+    timestamp: String
+  }],
   status: Boolean
 })
 const traveltime = new mongoose.Schema({
@@ -58,7 +68,10 @@ const traveltime = new mongoose.Schema({
   time: Number
 })
 const location = new mongoose.Schema({
-  location: String
+  location: {
+    type: String,
+    unique: true
+  }
 })
 userSchema.plugin(passportLocalMongoose);
 
