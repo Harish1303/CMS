@@ -208,7 +208,7 @@ app.post("/updateparcel", function (req, res) {
     Route.find({ start: start, destination: destination }).then(routes => {
       correct_route = routes[0]
       path = correct_route.path
-      x = {location : newlocation,timestamp : date}
+      x = { location: newlocation, timestamp: date }
       if (path.includes(newlocation)) {
         //push
         Parcel.findOneAndUpdate({ parcelid: parcelid }, {
@@ -235,15 +235,19 @@ app.post("/updateparcel", function (req, res) {
 
 app.post("/searchbyid", function (req, res) {
   parcelid = req.body.parcelid
-  Parcel.find({ parcelid: parcelid }).then(parcel => {
-    path_travelled = parcel[0].path
-    start = parcel[0].start
-    destination = parcel[0].destination
+  Parcel.findOne({ parcelid: parcelid }).then(parcel => {
+    path_travelled = []
+    timestamps = []
+    for (var i = 0; i < parcel.path.length; i++) {
+      path_travelled.push(parcel.path[i]["location"])
+      timestamps.push(parcel.path[i]["timestamp"])
+    }
+    start = parcel.start
+    destination = parcel.destination
     cur_location = path_travelled[path_travelled.length - 1]
-    Route.find({ start: start, destination: destination }).then(rote => {
-      complete_path = rote[0].path
-      var i = 0;
-      for (i = 0; i < complete_path.length; i++) {
+    Route.findOne({ start: start, destination: destination }).then(route => {
+      complete_path = route.path
+      for (var i = 0; i < complete_path.length; i++) {
         if (complete_path[i] == cur_location) {
           break;
         }
@@ -262,7 +266,16 @@ app.post("/searchbyid", function (req, res) {
         console.log(eta)
         console.log(parcel);
         console.log(remaining_path);
+        remaining_path = remaining_path.slice(1, remaining_path.length)
+        lnt = []
+        for (var i = 0; i < path_travelled.length; i++) {
+          x = { location: path_travelled[i], timestamp: timestamps[i] }
 
+          lnt.push(x)
+        }
+        console.log("l")
+        console.log(lnt)
+        res.render("orderdetails", { delivered: lnt, to_be_delivered: remaining_path, timestamps: timestamps })
       })
 
     })
@@ -293,7 +306,7 @@ app.post("/addparcel", function (req, res) {
   const parcelid = Math.random().toString(36).slice(-6);
   Parcel.create({
     parcelid: parcelid, from: req.body.from, to: req.body.to, description: req.body.description, destination: req.body.destination
-    , weight: req.body.weight, start: req.body.start, path: {location : req.body.start,timestamp : req.body.date}, status: true
+    , weight: req.body.weight, start: req.body.start, path: { location: req.body.start, timestamp: req.body.date }, status: true
   })
   res.redirect("/addparcel");
 });
