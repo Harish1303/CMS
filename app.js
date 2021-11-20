@@ -199,19 +199,20 @@ app.post("/traveltime", function (req, res) {
 })
 app.post("/updateparcel", function (req, res) {
   parcelid = req.body.parcelid
-  newlocation = req.body.newlocation
+  newlocation = req.body.location
+  date = req.body.date
   Parcel.find({ parcelid: parcelid }).then(parcel => {
     cur_parcel = parcel[0]
     start = cur_parcel.start
     destination = cur_parcel.destination
-
     Route.find({ start: start, destination: destination }).then(routes => {
       correct_route = routes[0]
       path = correct_route.path
+      x = {location : newlocation,timestamp : date}
       if (path.includes(newlocation)) {
         //push
         Parcel.findOneAndUpdate({ parcelid: parcelid }, {
-          $push: { path: newlocation }
+          $push: { path: x }
         }).then(updatedparcel => {
           res.redirect("/updateparcel")
         }).catch(err => {
@@ -292,7 +293,7 @@ app.post("/addparcel", function (req, res) {
   const parcelid = Math.random().toString(36).slice(-6);
   Parcel.create({
     parcelid: parcelid, from: req.body.from, to: req.body.to, description: req.body.description, destination: req.body.destination
-    , weight: req.body.weight, start: req.body.start, path: [req.body.start], status: true
+    , weight: req.body.weight, start: req.body.start, path: {location : req.body.start,timestamp : req.body.date}, status: true
   })
   res.redirect("/addparcel");
 });
