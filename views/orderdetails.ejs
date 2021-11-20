@@ -106,7 +106,15 @@
             width: 2.2rem;
             height: 2.2rem;
             border-radius: 50%;
-            background: #f05a00;
+            background: green;
+        }
+
+        .order-track-tbd-dot {
+            display: block;
+            width: 2.2rem;
+            height: 2.2rem;
+            border-radius: 50%;
+            background: orange;
         }
 
         .order-track-status-line {
@@ -114,7 +122,7 @@
             margin: 0 auto;
             width: 2px;
             height: 7rem;
-            background: #f05a00;
+            background: black;
         }
 
         .order-track-text-stat {
@@ -139,38 +147,37 @@
     </figcaption>
     </figure>
     <div class="order-track">
-        <div class="order-track-step">
-            <div class="order-track-status">
-                <span class="order-track-status-dot"></span>
-                <span class="order-track-status-line"></span>
+        <% delivered.forEach(function(location){ %>
+            <div class="order-track-step">
+                <div class="order-track-status">
+                    <span class="order-track-status-dot"></span>
+                    <span class="order-track-status-line"></span>
+                </div>
+                <div class="order-track-text">
+                    <p class="order-track-text-stat">
+                        <%= location %>
+                    </p>
+                    <span class="order-track-text-sub">1st November, 2019</span>
+                </div>
             </div>
-            <div class="order-track-text">
-                <p class="order-track-text-stat">Label Created</p>
-                <span class="order-track-text-sub">1st November, 2019</span>
-            </div>
-        </div>
-        <div class="order-track-step">
-            <div class="order-track-status">
-                <span class="order-track-status-dot"></span>
-                <span class="order-track-status-line"></span>
-            </div>
-            <div class="order-track-text">
-                <p class="order-track-text-stat"> Shipped - 123 Start St.
-                    Seattle, WA </p>
-                <span class="order-track-text-sub">1st November, 2019</span>
-            </div>
-        </div>
-        <div class="order-track-step">
-            <div class="order-track-status">
-                <span class="order-track-status-dot"></span>
-                <span class="order-track-status-line"></span>
-            </div>
-            <div class="order-track-text">
-                <p class="order-track-text-stat"> Estimated - 456 End St.
-                    New York City, NY</p>
-                <span class="order-track-text-sub">3rd November, 2019</span>
-            </div>
-        </div>
+            <% }) %>
+                <% to_be_delivered.forEach(function(location){ %>
+                    <div class="order-track-step">
+                        <div class="order-track-status">
+                            <span class="order-track-tbd-dot"></span>
+                            <span class="order-track-status-line"></span>
+                        </div>
+                        <div class="order-track-text">
+                            <p class="order-track-text-stat">
+                                <%= location %>
+                            </p>
+                            <span class="order-track-text-sub">1st November, 2019</span>
+                        </div>
+                    </div>
+                    <% }) %>
+
+
+
 
     </div>
 </section>
