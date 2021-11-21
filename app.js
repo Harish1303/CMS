@@ -132,7 +132,7 @@ app.get("/dashboard", function (req, res) {
 app.post("/addroute", function (req, res) {
   start = req.body.location[0]
   destination = req.body.location[(req.body.location.length) - 1]
-  Route.create({ start: start, destination: destination, path: req.body.location })
+  Route.create({ routeid : start+destination,start: start, destination: destination, path: req.body.location })
 })
 app.get("/addlocation", function (req, res) {
   if (req.session.loggedInUser) {
