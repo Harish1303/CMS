@@ -275,7 +275,7 @@ app.post("/searchbyid", function (req, res) {
         }
         console.log("l")
         console.log(lnt)
-        res.render("orderdetails", { delivered: lnt, to_be_delivered: remaining_path, timestamps: timestamps })
+        res.render("orderdetails", { delivered: lnt, to_be_delivered: remaining_path, timestamps: timestamps,parcel_id: parcelid })
       })
 
     })
