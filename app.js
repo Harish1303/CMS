@@ -133,6 +133,7 @@ app.post("/addroute", function (req, res) {
   start = req.body.location[0]
   destination = req.body.location[(req.body.location.length) - 1]
   Route.create({ routeid : start+destination,start: start, destination: destination, path: req.body.location })
+  res.render("alert",{message : "route added successfully", hre : "addroute"})
 })
 app.get("/addlocation", function (req, res) {
   if (req.session.loggedInUser) {
@@ -144,7 +145,7 @@ app.get("/addlocation", function (req, res) {
 })
 app.post("/addlocation", function (req, res) {
   Location.create({ location: req.body.location }).then(success => {
-    res.redirect("/addlocation")
+    res.render("alert",{message : "location added successfully", hre : "addlocation"})
   }).catch(err => {
     console.log(err)
   })
@@ -192,7 +193,7 @@ app.post("/traveltime", function (req, res) {
     "time": newtime
   }
   Traveltime.findOneAndUpdate(filter, update, { new: true, upsert: true }).then(suc => {
-    res.redirect("/traveltime")
+    res.render("alert",{message : "travel time updated successfully", hre : "traveltime"})
   });
 
 
@@ -214,7 +215,7 @@ app.post("/updateparcel", function (req, res) {
         Parcel.findOneAndUpdate({ parcelid: parcelid }, {
           $push: { path: x }
         }).then(updatedparcel => {
-          res.redirect("/updateparcel")
+          res.render("alert",{message : "Parcel location updated successfully", hre : "updateparcel"})
         }).catch(err => {
           console.log(err)
         })
@@ -310,7 +311,7 @@ app.post("/addparcel", function (req, res) {
     parcelid: parcelid, from: req.body.from, to: req.body.to, description: req.body.description, destination: req.body.destination
     , weight: req.body.weight, start: req.body.start, path: { location: req.body.start, timestamp: req.body.date }, status: true
   })
-  res.redirect("/addparcel");
+  res.render("alert",{message : "Parcel added successfully", hre : "addparcel"})
 });
 app.get("/logout", function (req, res) {
   req.logout();
@@ -325,7 +326,7 @@ app.post("/register", function (req, res) {
       res.redirect("/register");
     } else {
       passport.authenticate("local")(req, res, function () {
-        res.redirect("/login");
+        res.render("alert",{message : "User Registered successfully", hre : "login"})
       });
     }
   });
@@ -355,6 +356,9 @@ app.post("/login", function (req, res) {
     }
   });
 
+});
+app.post("/apply1", function (req, res) {
+  res.redirect("/"+req.body.li);
 });
 
 
