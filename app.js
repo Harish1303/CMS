@@ -254,28 +254,30 @@ app.post("/searchbyid", function (req, res) {
       }
       remaining_path = complete_path.slice(i, complete_path.length)
       var eta = 0
+      remaining = []
       async function loop(path) {
         for (let i = 0; i < path.length - 1; i++) {
           times = await Traveltime.find({ "from": path[i], "to": path[i + 1] }).catch(err => {
             console.log(err)
           })
           eta = eta + times[0].time
+          x = { location: remaining_path[i], timestamp: eta }
+          remaining.push(x)
         }
       }
       loop(remaining_path).then(a => {
         console.log(eta)
         console.log(parcel);
-        console.log(remaining_path);
         remaining_path = remaining_path.slice(1, remaining_path.length)
+        console.log(remaining_path);
         lnt = []
         for (var i = 0; i < path_travelled.length; i++) {
           x = { location: path_travelled[i], timestamp: timestamps[i] }
-
           lnt.push(x)
         }
         console.log("l")
         console.log(lnt)
-        res.render("orderdetails", { delivered: lnt, to_be_delivered: remaining_path, timestamps: timestamps,parcel_id: parcelid })
+        res.render("orderdetails", { delivered: lnt, to_be_delivered: remaining, timestamps: timestamps,parcel_id: parcelid })
       })
 
     })

@@ -164,7 +164,7 @@
                 </div>
             </div>
             <% }) %>
-                <% to_be_delivered.forEach(function(location){ %>
+                <% to_be_delivered.forEach(function(obj){ %>
                     <div class="order-track-step">
                         <div class="order-track-status">
                             <span class="order-track-tbd-dot"></span>
@@ -172,9 +172,9 @@
                         </div>
                         <div class="order-track-text">
                             <p class="order-track-text-stat">
-                                <%= location %>
+                                <%= obj.location %>
                             </p>
-                            <span class="order-track-text-sub">1st November, 2019</span>
+                            <span class="order-track-text-sub"><%= "expected to arrive in " + Math.floor(obj.timestamp/24) + " days "+  obj.timestamp % 24 + " hours" %></span>
                         </div>
                     </div>
                     <% }) %>
