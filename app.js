@@ -134,7 +134,7 @@ app.post("/addroute", function (req, res) {
   start = req.body.location[0]
   destination = req.body.location[(req.body.location.length) - 1]
   Route.create({ routeid : start+destination,start: start, destination: destination, path: req.body.location })
-  res.render("alert",{message : "route added successfully", hre : "addroute"})
+  
 })
 app.get("/addlocation", function (req, res) {
   if (req.session.loggedInUser) {
