@@ -58,7 +58,8 @@ const parcel = new mongoose.Schema({
   weight: Number,
   path: [{
     location: String,
-    timestamp: String
+    timestamp: String,
+    arrival_time: String
   }],
   status: Boolean
 })
@@ -202,6 +203,7 @@ app.post("/updateparcel", function (req, res) {
   parcelid = req.body.parcelid
   newlocation = req.body.location
   date = req.body.date
+  time = req.body.time
   Parcel.find({ parcelid: parcelid }).then(parcel => {
     cur_parcel = parcel[0]
     start = cur_parcel.start
@@ -209,7 +211,7 @@ app.post("/updateparcel", function (req, res) {
     Route.find({ start: start, destination: destination }).then(routes => {
       correct_route = routes[0]
       path = correct_route.path
-      x = { location: newlocation, timestamp: date }
+      x = { location: newlocation, timestamp: date,arrival_time : time}
       if (path.includes(newlocation)) {
         //push
         Parcel.findOneAndUpdate({ parcelid: parcelid }, {
@@ -239,9 +241,11 @@ app.post("/searchbyid", function (req, res) {
   Parcel.findOne({ parcelid: parcelid }).then(parcel => {
     path_travelled = []
     timestamps = []
+    arrival_times = []
     for (var i = 0; i < parcel.path.length; i++) {
       path_travelled.push(parcel.path[i]["location"])
       timestamps.push(parcel.path[i]["timestamp"])
+      arrival_times.push(parcel.path[i]["arrival_time"])
     }
     start = parcel.start
     destination = parcel.destination
@@ -262,7 +266,7 @@ app.post("/searchbyid", function (req, res) {
             console.log(err)
           })
           eta = eta + times[0].time
-          x = { location: remaining_path[i], timestamp: eta }
+          x = { location: remaining_path[i+1], timestamp: eta }
           remaining.push(x)
         }
       }
@@ -273,7 +277,7 @@ app.post("/searchbyid", function (req, res) {
         console.log(remaining_path);
         lnt = []
         for (var i = 0; i < path_travelled.length; i++) {
-          x = { location: path_travelled[i], timestamp: timestamps[i] }
+          x = { location: path_travelled[i], timestamp: timestamps[i], arrival_time: arrival_times[i] }
           lnt.push(x)
         }
         console.log("l")
@@ -309,9 +313,9 @@ app.post("/addparcel", function (req, res) {
   const parcelid = Math.random().toString(36).slice(-6);
   Parcel.create({
     parcelid: parcelid, from: req.body.from, to: req.body.to, description: req.body.description, destination: req.body.destination
-    , weight: req.body.weight, start: req.body.start, path: { location: req.body.start, timestamp: req.body.date }, status: true
+    , weight: req.body.weight, start: req.body.start, path: { location: req.body.start, timestamp: req.body.date ,arrival_time: req.body.time}, status: true
   })
-  res.render("alert",{message : "Parcel added successfully", hre : "addparcel"})
+  res.render("alert",{message : "Parcel added successfully , Your parcelid is "+ parcelid, hre : "addparcel"})
 });
 app.get("/logout", function (req, res) {
   req.logout();
