@@ -63,7 +63,8 @@ const parcel = new mongoose.Schema({
   weight: Number,
   path: [{
     location: String,
-    timestamp: String
+    timestamp: String,
+    arrival_time: String
   }],
   status: Boolean
 })
@@ -140,6 +141,8 @@ app.post("/addroute", function (req, res) {
   start = req.body.location[0]
   destination = req.body.location[(req.body.location.length) - 1]
   Route.create({ routeid: start + destination, start: start, destination: destination, path: req.body.location })
+  res.redirect("/dashboard")
+
 })
 app.get("/addlocation", function (req, res) {
   if (req.session.loggedInUser) {
@@ -151,7 +154,7 @@ app.get("/addlocation", function (req, res) {
 })
 app.post("/addlocation", function (req, res) {
   Location.create({ location: req.body.location }).then(success => {
-    res.redirect("/addlocation")
+    res.render("alert", { message: "location added successfully", hre: "addlocation" })
   }).catch(err => {
     console.log(err)
   })
@@ -199,7 +202,7 @@ app.post("/traveltime", function (req, res) {
     "time": newtime
   }
   Traveltime.findOneAndUpdate(filter, update, { new: true, upsert: true }).then(suc => {
-    res.redirect("/traveltime")
+    res.render("alert", { message: "travel time updated successfully", hre: "traveltime" })
   });
 
 
@@ -208,6 +211,7 @@ app.post("/updateparcel", function (req, res) {
   parcelid = req.body.parcelid
   newlocation = req.body.location
   date = req.body.date
+  time = req.body.time
   Parcel.find({ parcelid: parcelid }).then(parcel => {
     cur_parcel = parcel[0]
     start = cur_parcel.start
@@ -215,13 +219,13 @@ app.post("/updateparcel", function (req, res) {
     Route.find({ start: start, destination: destination }).then(routes => {
       correct_route = routes[0]
       path = correct_route.path
-      x = { location: newlocation, timestamp: date }
+      x = { location: newlocation, timestamp: date, arrival_time: time }
       if (path.includes(newlocation)) {
         //push
         Parcel.findOneAndUpdate({ parcelid: parcelid }, {
           $push: { path: x }
         }).then(updatedparcel => {
-          res.redirect("/updateparcel")
+          res.render("alert", { message: "Parcel location updated successfully", hre: "updateparcel" })
         }).catch(err => {
           console.log(err)
         })
@@ -245,9 +249,11 @@ app.post("/searchbyid", function (req, res) {
   Parcel.findOne({ parcelid: parcelid }).then(parcel => {
     path_travelled = []
     timestamps = []
+    arrival_times = []
     for (var i = 0; i < parcel.path.length; i++) {
       path_travelled.push(parcel.path[i]["location"])
       timestamps.push(parcel.path[i]["timestamp"])
+      arrival_times.push(parcel.path[i]["arrival_time"])
     }
     start = parcel.start
     destination = parcel.destination
@@ -261,28 +267,30 @@ app.post("/searchbyid", function (req, res) {
       }
       remaining_path = complete_path.slice(i, complete_path.length)
       var eta = 0
+      remaining = []
       async function loop(path) {
         for (let i = 0; i < path.length - 1; i++) {
           times = await Traveltime.find({ "from": path[i], "to": path[i + 1] }).catch(err => {
             console.log(err)
           })
           eta = eta + times[0].time
+          x = { location: remaining_path[i + 1], timestamp: eta }
+          remaining.push(x)
         }
       }
       loop(remaining_path).then(a => {
         console.log(eta)
         console.log(parcel);
-        console.log(remaining_path);
         remaining_path = remaining_path.slice(1, remaining_path.length)
+        console.log(remaining_path);
         lnt = []
         for (var i = 0; i < path_travelled.length; i++) {
-          x = { location: path_travelled[i], timestamp: timestamps[i] }
-
+          x = { location: path_travelled[i], timestamp: timestamps[i], arrival_time: arrival_times[i] }
           lnt.push(x)
         }
         console.log("l")
         console.log(lnt)
-        res.render("orderdetails", { delivered: lnt, to_be_delivered: remaining_path, timestamps: timestamps, parcel_id: parcelid })
+        res.render("orderdetails", { delivered: lnt, to_be_delivered: remaining, timestamps: timestamps, parcel_id: parcelid })
       })
 
     })
@@ -313,9 +321,9 @@ app.post("/addparcel", function (req, res) {
   const parcelid = Math.random().toString(36).slice(-6);
   Parcel.create({
     parcelid: parcelid, from: req.body.from, to: req.body.to, description: req.body.description, destination: req.body.destination
-    , weight: req.body.weight, start: req.body.start, path: { location: req.body.start, timestamp: req.body.date }, status: true
+    , weight: req.body.weight, start: req.body.start, path: { location: req.body.start, timestamp: req.body.date, arrival_time: req.body.time }, status: true
   })
-  res.redirect("/addparcel");
+  res.render("alert", { message: "Parcel added successfully , Your parcelid is " + parcelid, hre: "addparcel" })
 });
 app.get("/logout", function (req, res) {
   req.logout();
@@ -330,7 +338,7 @@ app.post("/register", function (req, res) {
       res.redirect("/register");
     } else {
       passport.authenticate("local")(req, res, function () {
-        res.redirect("/login");
+        res.render("alert", { message: "User Registered successfully", hre: "login" })
       });
     }
   });
@@ -360,6 +368,9 @@ app.post("/login", function (req, res) {
     }
   });
 
+});
+app.post("/apply1", function (req, res) {
+  res.redirect("/" + req.body.li);
 });
 
 

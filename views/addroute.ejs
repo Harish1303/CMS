@@ -75,12 +75,11 @@
                         method: "POST",
                         data: $('#add_name').serialize(),
                         success: function (data) {
-                            alert(data);
+                            alert("route added succesfully");
                             console.log(data)
                             $('#add_name')[0].reset();
                         }
                     });
-                    console.log($('#add_name').serialize())
                 });
             });
             var data = JSON.parse(document.querySelector(".locations").value);
