@@ -25,7 +25,12 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-mongoose.connect("mongodb://localhost:27017/CMS", { useNewUrlParser: true });
+
+
+mongoose.connect("mongodb://localhost:27017/CMS", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 mongoose.set("useCreateIndex", true);
 mongoose.set('useFindAndModify', false);
 
@@ -128,11 +133,13 @@ app.get("/dashboard", function (req, res) {
   }
 
 });
-
+app.post("/alert", function (req, res) {
+  res.render("alerts", { message: req.body.message, route: req.body.route })
+})
 app.post("/addroute", function (req, res) {
   start = req.body.location[0]
   destination = req.body.location[(req.body.location.length) - 1]
-  Route.create({ routeid : start+destination,start: start, destination: destination, path: req.body.location })
+  Route.create({ routeid: start + destination, start: start, destination: destination, path: req.body.location })
 })
 app.get("/addlocation", function (req, res) {
   if (req.session.loggedInUser) {
@@ -275,7 +282,7 @@ app.post("/searchbyid", function (req, res) {
         }
         console.log("l")
         console.log(lnt)
-        res.render("orderdetails", { delivered: lnt, to_be_delivered: remaining_path, timestamps: timestamps,parcel_id: parcelid })
+        res.render("orderdetails", { delivered: lnt, to_be_delivered: remaining_path, timestamps: timestamps, parcel_id: parcelid })
       })
 
     })
