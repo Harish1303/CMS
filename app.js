@@ -125,6 +125,7 @@ app.get("/addroute", function (req, res) {
 app.get("/searchbyid", function (req, res) {
   res.render("searchbyid");
 });
+
 app.get("/dashboard", function (req, res) {
   if (req.session.loggedInUser) {
     res.render("dashboard")
@@ -142,6 +143,20 @@ app.post("/addroute", function (req, res) {
   destination = req.body.location[(req.body.location.length) - 1]
   Route.create({ routeid: start + destination, start: start, destination: destination, path: req.body.location })
   res.redirect("/dashboard")
+
+})
+app.post("/deletebyid", function (req, res) {
+  id = req.body.parcelid
+  console.log(id)
+  Parcel.deleteOne({ parcelid: id }).then(p => {
+    res.redirect("/viewallparcels")
+  })
+})
+app.get("/viewallparcels", function (req, res) {
+  Parcel.find({}).then(details => {
+    console.log(details)
+    res.render("viewallparcels", { details: details })
+  })
 
 })
 app.get("/addlocation", function (req, res) {
@@ -318,7 +333,8 @@ app.post("/searchbyid", function (req, res) {
     })*/
 })
 app.post("/addparcel", function (req, res) {
-  const parcelid = Math.random().toString(36).slice(-6);
+  const parcelid = Math.random().toString(36).slice(-6).toUpperCase();
+
   Parcel.create({
     parcelid: parcelid, from: req.body.from, to: req.body.to, description: req.body.description, destination: req.body.destination
     , weight: req.body.weight, start: req.body.start, path: { location: req.body.start, timestamp: req.body.date, arrival_time: req.body.time }, status: true
